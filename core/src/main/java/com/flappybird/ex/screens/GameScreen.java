@@ -9,11 +9,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScalingViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.flappybird.ex.FlappyBirdEx;
 import com.flappybird.ex.entities.Background;
 import com.flappybird.ex.entities.Bird;
+import com.flappybird.ex.entities.Menu;
 import com.flappybird.ex.entities.Pipe;
 import com.flappybird.ex.utils.GameUtils;
 
@@ -23,21 +27,21 @@ import java.util.Random;
 public class GameScreen implements Screen {
 
     private final FlappyBirdEx game;
+    public Menu menu;
 
     private final OrthographicCamera camera = new OrthographicCamera();
 
     private final Viewport viewport = new FitViewport(FlappyBirdEx.WORLD_WIDTH, FlappyBirdEx.WORLD_HEIGHT, camera);
 
+    private Background background;
 
-    private final Background background;
-
-    private final Bird bird;
+    private Bird bird;
 
     private Pipe[] pipes = new Pipe[3];
 
-    private final Texture pipeTexture;
+    private Texture pipeTexture;
 
-    private final Texture pipeGapTexture;
+    private Texture pipeGapTexture;
 
     private ShapeRenderer shapeRenderer = new ShapeRenderer()   ;
 
@@ -45,15 +49,16 @@ public class GameScreen implements Screen {
 
     public GameScreen(FlappyBirdEx game) {
         this.game = game;
-        background = new Background(GameUtils.isNight());
-        bird = new Bird(FlappyBirdEx.WORLD_WIDTH / 2.5f, FlappyBirdEx.WORLD_HEIGHT / 2f, background.getGroundHeight());
-        pipeTexture = new Texture("sprites/pipe.png");
-        pipeGapTexture = new Texture("sprites/pipe_gap.png");
+
     }
 
     @Override
     public void show() {
-
+        background = new Background(GameUtils.isNight());
+        bird = new Bird(FlappyBirdEx.WORLD_WIDTH / 2.5f, FlappyBirdEx.WORLD_HEIGHT / 2f, background.getGroundHeight(), this);
+        pipeTexture = new Texture("sprites/pipe.png");
+        pipeGapTexture = new Texture("sprites/pipe_gap.png");
+        menu = new Menu();
     }
 
     @Override
@@ -76,6 +81,7 @@ public class GameScreen implements Screen {
            }
        }
         bird.render(batch);
+        menu.render(batch);
         batch.end();
     }
 
@@ -116,7 +122,8 @@ public class GameScreen implements Screen {
                     continue;
                 }
                 maxPipeX += (float) (FlappyBirdEx.WORLD_WIDTH / 2.5 + rand.nextInt(FlappyBirdEx.WORLD_WIDTH - FlappyBirdEx.WORLD_WIDTH / 2 + 1));
-                pipes[i] = new Pipe(maxPipeX, (int) (bird.getHeight() * (4.5f + rand.nextInt(3))), background.getGroundHeight(), FlappyBirdEx.WORLD_HEIGHT - background.getGroundHeight(), pipeGapTexture.getWidth());
+                //pipes[i] = new Pipe(maxPipeX, (int) (bird.getHeight() * (4.5f + rand.nextInt(3))), background.getGroundHeight(), FlappyBirdEx.WORLD_HEIGHT - background.getGroundHeight(), pipeGapTexture.getWidth());
+                pipes[i] = new Pipe(maxPipeX, 300, background.getGroundHeight(), FlappyBirdEx.WORLD_HEIGHT - background.getGroundHeight(), pipeGapTexture.getWidth());
             }
         }
         bird.update(delta);
