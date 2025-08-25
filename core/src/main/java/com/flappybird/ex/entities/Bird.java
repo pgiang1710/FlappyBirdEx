@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import com.flappybird.ex.FlappyBirdEx;
-import com.flappybird.ex.screens.GameScreen;
 
 public class Bird implements Disposable {
 
@@ -35,9 +34,8 @@ public class Bird implements Disposable {
 
     private final int groundHeight;
     private final Rectangle bounds;
-    private final GameScreen screen;
 
-    public Bird(float centerX, float centerY, int groundHeight, GameScreen screen) {
+    public Bird(float centerX, float centerY, int groundHeight) {
         spriteSheet = new Texture("sprites/bird.png");
         TextureRegion[][] tmp = TextureRegion.split(spriteSheet, spriteSheet.getWidth()/3, spriteSheet.getHeight());
         TextureRegion[] frames = new TextureRegion[3];
@@ -53,7 +51,6 @@ public class Bird implements Disposable {
         bounds = new Rectangle(x - width/2f, y - height/2f, width, height);
         gravity = -height * 60f;
         jumpForce = height * 15f;
-        this.screen = screen;
     }
 
     private static final float IDLE_AMPLITUDE = 5f;  // pixels
@@ -69,17 +66,6 @@ public class Bird implements Disposable {
     }
 
     public void setState(State state) {
-        System.out.println(state);
-        if(this.state != state){
-            if(state == State.DEAD){
-               screen.menu.show();
-               //System.out.println("isShow()");
-            }
-            if(state == State.IDLE){
-                screen.menu.hide();
-                //System.out.println("isHide()");
-            }
-        }
         this.state = state;
     }
 
@@ -101,7 +87,6 @@ public class Bird implements Disposable {
             if (y < minY) {
                 y = minY;
             }
-
         }
         else {
             stateTime += delta;
@@ -111,7 +96,7 @@ public class Bird implements Disposable {
             if (y < minY) {
                 y = minY;
                 velocityY = 0f;
-                setState(State.DEAD);
+                state = State.DEAD;
             }
             else if(y > FlappyBirdEx.WORLD_HEIGHT - groundHeight  - (float) height / 2) {
                 y = FlappyBirdEx.WORLD_HEIGHT - groundHeight  - (float) height / 2;
