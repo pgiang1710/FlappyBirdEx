@@ -5,29 +5,22 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.flappybird.ex.FlappyBirdEx;
-import com.flappybird.ex.entities.Background;
 import com.flappybird.ex.entities.Bird;
-import com.flappybird.ex.entities.Menu;
 import com.flappybird.ex.managers.BackgroundManager;
 import com.flappybird.ex.managers.BirdManager;
 import com.flappybird.ex.managers.PipeManager;
-import com.flappybird.ex.utils.GameUtils;
 
 import java.util.Random;
 
 public class GameScreen implements Screen {
 
     private final FlappyBirdEx game;
-    public Menu menu;
     private final OrthographicCamera camera = new OrthographicCamera();
     private final Viewport viewport = new FitViewport(FlappyBirdEx.WORLD_WIDTH, FlappyBirdEx.WORLD_HEIGHT, camera);
-    private Bird bird;
     Random rand = new Random();
     private PipeManager pipeManager;
     private BirdManager birdManager;
@@ -40,10 +33,8 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         backgroundManager = new BackgroundManager();
-        bird = new Bird(FlappyBirdEx.WORLD_WIDTH / 2.5f, FlappyBirdEx.WORLD_HEIGHT / 2f, backgroundManager.getGroundHeight());
-        menu = new Menu();
-
-        pipeManager = new PipeManager();
+        birdManager = new BirdManager(backgroundManager);
+        pipeManager = new PipeManager(birdManager,backgroundManager);
         pipeManager.addPipes(3);
     }
 
@@ -62,31 +53,30 @@ public class GameScreen implements Screen {
 
         backgroundManager.renderWorld(batch);
         pipeManager.renderPipes(batch);
-        bird.render(batch);
-        menu.render(batch);
+        birdManager.render(batch);
         batch.end();
     }
 
     private void update(float delta) {
         if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            if (bird.getState() == Bird.State.DEAD) {
-                bird.setState(Bird.State.IDLE);
-                bird.setPosition(FlappyBirdEx.WORLD_WIDTH / 3f, FlappyBirdEx.WORLD_HEIGHT / 2f);
+            if (birdManager.getState() == Bird.State.DEAD) {
+                birdManager.setState(Bird.State.IDLE);
+                birdManager.setPosition(FlappyBirdEx.WORLD_WIDTH / 3f, FlappyBirdEx.WORLD_HEIGHT / 2f);
                 pipeManager.addPipes(3);
             }
-            else if(bird.getState() == Bird.State.IDLE){
-                bird.setState(Bird.State.FLAPPY);
+            else if(birdManager.getState() == Bird.State.IDLE){
+                birdManager.setState(Bird.State.FLAPPY);
             }
-            bird.jump();
+            birdManager.jump();
         }
-        if(bird.getState() != Bird.State.DEAD){
+        if(birdManager.getState() != Bird.State.DEAD){
             backgroundManager.updateWorld(delta);
         }
-        if(bird.getState() == Bird.State.FLAPPY){
-            pipeManager.checkCollisions(bird, delta);
+        if(birdManager.getState() == Bird.State.FLAPPY){
+            pipeManager.checkCollisions(delta);
             pipeManager.updatePipes(backgroundManager.getBackground(), rand);
         }
-        bird.update(delta);
+        birdManager.update(delta);
     }
 
     @Override

@@ -14,6 +14,14 @@ import java.util.Random;
 public class PipeManager {
     private Pipe[] pipes;
     private float maxPipeX;
+    private BirdManager birdManager;
+    private BackgroundManager backgroundManager;
+
+    public PipeManager(BirdManager birdManager, BackgroundManager backgroundManager) {
+        this.birdManager = birdManager;
+        this.backgroundManager = backgroundManager;
+        maxPipeX = FlappyBirdEx.WORLD_WIDTH / 2f;
+    }
 
     public void renderPipes(SpriteBatch batch) {
         for (Pipe pipe : pipes) {
@@ -36,7 +44,7 @@ public class PipeManager {
             pipes[i] = new Pipe(maxPipeX, 300, background.getGroundHeight(), FlappyBirdEx.WORLD_HEIGHT - background.getGroundHeight(), pipeGapTexture.getWidth());
         }
     }
-    public void checkCollisions(Bird bird, float delta){
+    public void checkCollisions(float delta){
         maxPipeX = FlappyBirdEx.WORLD_WIDTH / 2f;
         for(int i = 0; i < pipes.length; i++){
             Pipe pipe = pipes[i];
@@ -46,8 +54,8 @@ public class PipeManager {
                     continue;
                 }
                 pipe.update(delta);
-                if(pipe.collides(bird.getBounds())) {
-                    bird.setState(Bird.State.DEAD);
+                if(pipe.collides(birdManager.getBounds())) {
+                    birdManager.setState(Bird.State.DEAD);
                 }
                 maxPipeX = Math.max(maxPipeX, pipe.getX());
             }
