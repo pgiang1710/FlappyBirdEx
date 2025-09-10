@@ -16,24 +16,24 @@ public class Bird implements Disposable {
         DEAD
     }
 
-    private final Texture spriteSheet;
-    private final Animation<TextureRegion> flapAnimation;
-    private float stateTime = 0f;
+    protected final Texture spriteSheet;
+    protected final Animation<TextureRegion> flapAnimation;
+    protected float stateTime = 0f;
 
-    private State state = State.IDLE;
+    protected State state = State.IDLE;
 
-    private float x;
-    private float y;
-    private final int width;
-    private final int height;
+    protected float x;
+    protected float y;
+    protected final int width;
+    protected final int height;
 
-    private float velocityY = 0f;
-    private float rotation;
-    private final float gravity;
-    private final float jumpForce;
+    protected float velocityY = 0f;
+    protected float rotation;
+    protected final float gravity;
+    protected final float jumpForce;
 
-    private final int groundHeight;
-    private final Rectangle bounds;
+    protected final int groundHeight;
+    protected final Rectangle bounds;
 
     public Bird(float centerX, float centerY, int groundHeight) {
         spriteSheet = new Texture("sprites/bird.png");

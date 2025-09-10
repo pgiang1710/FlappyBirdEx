@@ -18,9 +18,9 @@ import com.flappybird.ex.FlappyBirdEx;
 import com.flappybird.ex.screens.GameScreen;
 
 public class Menu {
-    private final FlappyBirdEx game;
-    private Texture menuBg;
-    private boolean isShow;
+    protected final FlappyBirdEx game;
+    protected Texture menuBg;
+    protected boolean isShow;
 
     public Menu() {
         menuBg = new Texture("sprites/restart.png"); // file phải nằm trong android/assets/sprites/

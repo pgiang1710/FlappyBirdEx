@@ -8,12 +8,12 @@ import com.flappybird.ex.FlappyBirdEx;
 
 public class Pipe {
 
-    private float x;
-    private int minY;
-    private int maxY;
-    private int width;
-    private int y1;
-    private int y2;
+    protected float x;
+    protected int minY;
+    protected int maxY;
+    protected int width;
+    protected int y1;
+    protected int y2;
 
     public Pipe(float spawnX, int gapHeight, int minY, int maxY, int width) {
         this.minY = minY;
@@ -70,7 +70,6 @@ public class Pipe {
         return rect.overlaps(topPipe) || rect.overlaps(bottomPipe);
     }
 
-    // ✅ Hàm vẽ hitbox để debug
     public void renderHitbox(ShapeRenderer shapeRenderer) {
         shapeRenderer.rect(x, minY, width, y1 - minY);
         shapeRenderer.rect(x, y2, width, maxY - y2);
