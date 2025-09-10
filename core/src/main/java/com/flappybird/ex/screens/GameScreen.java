@@ -5,62 +5,48 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScalingViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.flappybird.ex.FlappyBirdEx;
-import com.flappybird.ex.entities.Background;
 import com.flappybird.ex.entities.Bird;
-import com.flappybird.ex.entities.Menu;
-import com.flappybird.ex.entities.Pipe;
-import com.flappybird.ex.utils.GameUtils;
+import com.flappybird.ex.managers.BackgroundManager;
+import com.flappybird.ex.managers.BirdManager;
+import com.flappybird.ex.managers.PipeManager;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class GameScreen implements Screen {
 
+    // Các thuộc tính cần thiết
     private final FlappyBirdEx game;
-    public Menu menu;
+    private final OrthographicCamera camera;
+    private final Viewport viewport;
+    private Random rand;
 
-    private final OrthographicCamera camera = new OrthographicCamera();
+    // Các class quản lý các đối tượng của game
+    private PipeManager pipeManager;
+    private BirdManager birdManager;
+    private BackgroundManager backgroundManager;
 
-    private final Viewport viewport = new FitViewport(FlappyBirdEx.WORLD_WIDTH, FlappyBirdEx.WORLD_HEIGHT, camera);
-
-    private Background background;
-
-    private Bird bird;
-
-    private Pipe[] pipes = new Pipe[3];
-
-    private Texture pipeTexture;
-
-    private Texture pipeGapTexture;
-
-    private ShapeRenderer shapeRenderer = new ShapeRenderer()   ;
-
-    Random rand = new Random();
-
+    // Constructor
     public GameScreen(FlappyBirdEx game) {
         this.game = game;
-
+        rand = new Random();
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(FlappyBirdEx.WORLD_WIDTH, FlappyBirdEx.WORLD_HEIGHT, camera);
     }
 
+    // Khởi tạo các đối tượng và thiết lập màn hình
     @Override
     public void show() {
-        background = new Background(GameUtils.isNight());
-        bird = new Bird(FlappyBirdEx.WORLD_WIDTH / 2.5f, FlappyBirdEx.WORLD_HEIGHT / 2f, background.getGroundHeight(), this);
-        pipeTexture = new Texture("sprites/pipe.png");
-        pipeGapTexture = new Texture("sprites/pipe_gap.png");
-        menu = new Menu();
+        backgroundManager = new BackgroundManager();
+        birdManager = new BirdManager(backgroundManager);
+        pipeManager = new PipeManager(birdManager,backgroundManager);
+        pipeManager.addPipes(3);
     }
 
+    // Render các đối tượng lên màn hình
     @Override
     public void render(float delta) {
         update(delta);
@@ -69,88 +55,67 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         SpriteBatch batch = game.getSpriteBatch();
-
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        background.renderWorld(batch, FlappyBirdEx.WORLD_WIDTH, FlappyBirdEx.WORLD_HEIGHT);
 
-       for (Pipe pipe : pipes) {
-           if (pipe != null) {
-               pipe.render(batch, pipeTexture, pipeGapTexture);
-           }
-       }
-        bird.render(batch);
-        menu.render(batch);
+        batch.begin();
+        backgroundManager.renderWorld(batch);
+        pipeManager.renderPipes(batch);
+        birdManager.render(batch);
         batch.end();
     }
 
+    // Cập nhật game theo delta time
     private void update(float delta) {
+        // Xử lý sự kiện người dùng chạm vào màn hình và cập nhật trạng thái trò chơi <<pgiang, hieppham>>
         if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            if (bird.getState() == Bird.State.DEAD) {
-                bird.setState(Bird.State.IDLE);
-                bird.setPosition(FlappyBirdEx.WORLD_WIDTH / 3f, FlappyBirdEx.WORLD_HEIGHT / 2f);
-                pipes = new Pipe[3];
+            if (birdManager.getState() == Bird.State.DEAD) {
+                birdManager.setState(Bird.State.IDLE);
+                birdManager.setPosition(FlappyBirdEx.WORLD_WIDTH / 3f, FlappyBirdEx.WORLD_HEIGHT / 2f);
+                pipeManager.addPipes(3);
             }
-            else if(bird.getState() == Bird.State.IDLE){
-                bird.setState(Bird.State.FLAPPY);
+            else if(birdManager.getState() == Bird.State.IDLE){
+                birdManager.setState(Bird.State.FLAPPY);
             }
-            bird.jump();
+            birdManager.jump();
         }
-        if(bird.getState() != Bird.State.DEAD){
-            background.update(delta);
+        if(birdManager.getState() != Bird.State.DEAD){
+            backgroundManager.updateWorld(delta);
         }
-        if(bird.getState() == Bird.State.FLAPPY){
-            float maxPipeX = FlappyBirdEx.WORLD_WIDTH / 2f;
-            for(int i = 0; i < pipes.length; i++){
-                Pipe pipe = pipes[i];
-                if (pipe != null) {
-                    if(pipe.isOut()) {
-                        pipes[i] = null;
-                        continue;
-                    }
-                    pipe.update(delta);
-                    if(pipe.collides(bird.getBounds())) {
-                        bird.setState(Bird.State.DEAD);
-                    }
-                    maxPipeX = Math.max(maxPipeX, pipe.getX());
-                }
-            }
-            for(int i = 0; i < pipes.length; i++){
-                Pipe pipe = pipes[i];
-                if (pipe != null) {
-                    continue;
-                }
-                maxPipeX += (float) (FlappyBirdEx.WORLD_WIDTH / 2.5 + rand.nextInt(FlappyBirdEx.WORLD_WIDTH - FlappyBirdEx.WORLD_WIDTH / 2 + 1));
-                //pipes[i] = new Pipe(maxPipeX, (int) (bird.getHeight() * (4.5f + rand.nextInt(3))), background.getGroundHeight(), FlappyBirdEx.WORLD_HEIGHT - background.getGroundHeight(), pipeGapTexture.getWidth());
-                pipes[i] = new Pipe(maxPipeX, 300, background.getGroundHeight(), FlappyBirdEx.WORLD_HEIGHT - background.getGroundHeight(), pipeGapTexture.getWidth());
-            }
+        if(birdManager.getState() == Bird.State.FLAPPY){
+            pipeManager.checkCollisions();
+            pipeManager.updatePipes(delta);
         }
-        bird.update(delta);
+        birdManager.update(delta);
     }
 
+    // Cập nhật kích thước theo màn hình
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
     }
 
+    // Pause game
     @Override
     public void pause() {
 
     }
 
+    // Resume game
     @Override
     public void resume() {
 
     }
 
+    // Hủy game
     @Override
     public void hide() {
 
     }
 
+    // Loại bỏ các đối tượng khỏi bộ nhớ (optional)
     @Override
     public void dispose() {
-        background.dispose();
+
     }
 }

@@ -1,33 +1,26 @@
 package com.flappybird.ex.entities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import static com.flappybird.ex.managers.TextureManager.groundTexture;
+import static com.flappybird.ex.managers.TextureManager.backgroundTexture;
+
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Disposable;
 import com.flappybird.ex.FlappyBirdEx;
 
-public class Background {
+public class Background implements Disposable {
+    // Các thuộc tính cần thiết
+    protected final TextureRegion groundTop;
+    protected float groundOffsetX = 0;
+    protected final int groundHeight;
 
-    private final Texture backgroundTexture;
-    private final Texture groundTexture;
-    private final TextureRegion groundTop;
-    private float groundOffsetX = 0;
-
-    private final int groundHeight;
-
-    public Background(boolean isNight) {
-        backgroundTexture = new Texture("sprites/background.png");
-        groundTexture = new Texture("sprites/ground.png");
+    // Constructor
+    public Background() {
         groundTop = new TextureRegion(groundTexture);
         groundTop.flip(false, true);
         groundHeight = groundTexture.getHeight();
     }
 
-    public int getGroundHeight() {
-        return groundHeight;
-    }
-
+    // Cập nhật vị trí của mặt đất
     public void update(float delta) {
         groundOffsetX -= FlappyBirdEx.SCROLL_SPEED * delta;
         if (groundOffsetX <= -groundTexture.getWidth()) {
@@ -35,15 +28,14 @@ public class Background {
         }
     }
 
-    public void renderWorld(SpriteBatch batch, float worldWidth, float worldHeight) {
-
-        batch.draw(backgroundTexture, 0, groundTexture.getHeight(), worldWidth, worldHeight - groundTexture.getHeight() * 2);
-        for (float x = groundOffsetX; x < worldWidth; x += groundTexture.getWidth()) {
-            batch.draw(groundTexture, x, 0);
-            batch.draw(groundTop, x, worldHeight - groundTop.getRegionHeight());
-        }
+    // Getters
+    public TextureRegion getGroundTop() { return groundTop; }
+    public float getGroundOffsetX() { return groundOffsetX; }
+    public int getGroundHeight() {
+        return groundHeight;
     }
 
+    // Loại bỏ texture khi không sử dụng
     public void dispose() {
         backgroundTexture.dispose();
         groundTexture.dispose();
