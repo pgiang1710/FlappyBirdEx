@@ -7,71 +7,70 @@ import com.badlogic.gdx.math.Rectangle;
 import com.flappybird.ex.FlappyBirdEx;
 
 public class Pipe {
+    // Các thuộc tính cần thiết
+    private float x;
+    private final int minY;
+    private final int maxY;
+    private final int width;
+    private final int y1; // Vị trí dưới cùng của ống trên
+    private final int y2; // Vị trí trên cùng của ống dưới
 
-    protected float x;
-    protected int minY;
-    protected int maxY;
-    protected int width;
-    protected int y1;
-    protected int y2;
-
+    // Constructor
     public Pipe(float spawnX, int gapHeight, int minY, int maxY, int width) {
         this.minY = minY;
         this.maxY = maxY;
         this.x = spawnX;
+        this.width = width;
 
         int totalHeight = maxY - minY;
         int padding = totalHeight / 8;
-
         int gapY = minY + padding + (int)(Math.random() * (totalHeight - gapHeight - 2 * padding));
 
-        y1 = gapY;
-        y2 = gapY + gapHeight;
-        this.width = width;
+        this.y1 = gapY;
+        this.y2 = gapY + gapHeight;
     }
 
+    // Kiểm tra ống đã ra khỏi màn hình
     public boolean isOut() {
-        return x < -width + 10;
+        return x < -width;
     }
 
+    // Getter
     public float getX() {
         return x;
     }
 
+    // Vẽ ống
     public void render(SpriteBatch batch, Texture pipeTexture, Texture pipeGapTexture) {
+        // Vẽ ống trên
         for (int i = minY; i < y1 - pipeGapTexture.getHeight(); i += pipeTexture.getHeight()) {
             batch.draw(pipeTexture, x, i);
         }
         batch.draw(pipeGapTexture, x, y1 - pipeGapTexture.getHeight());
+
+        // Vẽ ống dưới
         for (int i = y2; i < maxY; i += pipeTexture.getHeight()) {
             batch.draw(pipeTexture, x, i);
         }
-        batch.draw(
-            pipeGapTexture,
-            x,
-            y2,
-            pipeGapTexture.getWidth(),
-            pipeGapTexture.getHeight(),
-            0, 0,
-            pipeGapTexture.getWidth(), pipeGapTexture.getHeight(),
-            false,
-            true
-        );
+        batch.draw(pipeGapTexture, x, y2, width, pipeGapTexture.getHeight(),
+            0, 0, width, pipeGapTexture.getHeight(), false, true);
     }
 
+    // Cập nhật ống theo delta time
     public void update(float delta) {
         x -= FlappyBirdEx.SCROLL_SPEED * delta;
     }
 
+    // Thực hiện va chạm với chim
     public boolean collides(Rectangle rect) {
         Rectangle topPipe = new Rectangle(x, y2, width, maxY - y2);
         Rectangle bottomPipe = new Rectangle(x, minY, width, y1 - minY);
-
         return rect.overlaps(topPipe) || rect.overlaps(bottomPipe);
     }
 
+    // Thực hiện vẽ hitbox để debug
     public void renderHitbox(ShapeRenderer shapeRenderer) {
-        shapeRenderer.rect(x, minY, width, y1 - minY);
-        shapeRenderer.rect(x, y2, width, maxY - y2);
+        shapeRenderer.rect(x, minY, width, y1 - minY);    // Ống dưới
+        shapeRenderer.rect(x, y2, width, maxY - y2);      // Ống trên
     }
 }

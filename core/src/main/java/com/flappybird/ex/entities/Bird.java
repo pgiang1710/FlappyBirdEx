@@ -1,16 +1,14 @@
 package com.flappybird.ex.entities;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import com.flappybird.ex.FlappyBirdEx;
 
 public class Bird {
+    // Enum trạng thái của Bird
     public enum State {
         IDLE, FLAPPY, DEAD
     }
 
+    // Các thuộc tính cần thiết
     public float stateTime = 0f;
     public State state = State.IDLE;
     public float x;
@@ -25,6 +23,7 @@ public class Bird {
     public final Rectangle bounds;
     public float idleBaseY;
 
+    // Constructor
     public Bird(float centerX, float centerY, int groundHeight, int width, int height) {
         this.width = width;
         this.height = height;

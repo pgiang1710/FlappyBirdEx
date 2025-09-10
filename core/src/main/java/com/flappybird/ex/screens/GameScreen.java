@@ -18,18 +18,26 @@ import java.util.Random;
 
 public class GameScreen implements Screen {
 
+    // Các thuộc tính cần thiết
     private final FlappyBirdEx game;
-    private final OrthographicCamera camera = new OrthographicCamera();
-    private final Viewport viewport = new FitViewport(FlappyBirdEx.WORLD_WIDTH, FlappyBirdEx.WORLD_HEIGHT, camera);
-    Random rand = new Random();
+    private final OrthographicCamera camera;
+    private final Viewport viewport;
+    private Random rand;
+
+    // Các class quản lý các đối tượng của game
     private PipeManager pipeManager;
     private BirdManager birdManager;
     private BackgroundManager backgroundManager;
 
+    // Constructor
     public GameScreen(FlappyBirdEx game) {
         this.game = game;
+        rand = new Random();
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(FlappyBirdEx.WORLD_WIDTH, FlappyBirdEx.WORLD_HEIGHT, camera);
     }
 
+    // Khởi tạo các đối tượng và thiết lập màn hình
     @Override
     public void show() {
         backgroundManager = new BackgroundManager();
@@ -38,6 +46,7 @@ public class GameScreen implements Screen {
         pipeManager.addPipes(3);
     }
 
+    // Render các đối tượng lên màn hình
     @Override
     public void render(float delta) {
         update(delta);
@@ -46,18 +55,19 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         SpriteBatch batch = game.getSpriteBatch();
-
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-        batch.begin();
 
+        batch.begin();
         backgroundManager.renderWorld(batch);
         pipeManager.renderPipes(batch);
         birdManager.render(batch);
         batch.end();
     }
 
+    // Cập nhật game theo delta time
     private void update(float delta) {
+        // Xử lý sự kiện người dùng chạm vào màn hình và cập nhật trạng thái trò chơi <<pgiang, hieppham>>
         if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (birdManager.getState() == Bird.State.DEAD) {
                 birdManager.setState(Bird.State.IDLE);
@@ -73,32 +83,37 @@ public class GameScreen implements Screen {
             backgroundManager.updateWorld(delta);
         }
         if(birdManager.getState() == Bird.State.FLAPPY){
-            pipeManager.checkCollisions(delta);
-            pipeManager.updatePipes(backgroundManager.getBackground(), rand);
+            pipeManager.checkCollisions();
+            pipeManager.updatePipes(delta);
         }
         birdManager.update(delta);
     }
 
+    // Cập nhật kích thước theo màn hình
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
     }
 
+    // Pause game
     @Override
     public void pause() {
 
     }
 
+    // Resume game
     @Override
     public void resume() {
 
     }
 
+    // Hủy game
     @Override
     public void hide() {
 
     }
 
+    // Loại bỏ các đối tượng khỏi bộ nhớ (optional)
     @Override
     public void dispose() {
 
