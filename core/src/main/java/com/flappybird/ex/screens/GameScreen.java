@@ -1,5 +1,7 @@
 package com.flappybird.ex.screens;
 
+import static com.flappybird.ex.managers.TextureManager.restart;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -12,7 +14,9 @@ import com.flappybird.ex.FlappyBirdEx;
 import com.flappybird.ex.entities.Bird;
 import com.flappybird.ex.managers.BackgroundManager;
 import com.flappybird.ex.managers.BirdManager;
+import com.flappybird.ex.managers.MenuManager;
 import com.flappybird.ex.managers.PipeManager;
+import com.flappybird.ex.managers.ScoreManager;
 
 import java.util.Random;
 
@@ -23,11 +27,14 @@ public class GameScreen implements Screen {
     private final OrthographicCamera camera;
     private final Viewport viewport;
     private Random rand;
+    private final int pipeQuantity = 2;
 
     // Các class quản lý các đối tượng của game
     private PipeManager pipeManager;
     private BirdManager birdManager;
     private BackgroundManager backgroundManager;
+    private ScoreManager scoreManager;
+    private MenuManager menuManager;
 
     // Constructor
     public GameScreen(FlappyBirdEx game) {
@@ -43,7 +50,10 @@ public class GameScreen implements Screen {
         backgroundManager = new BackgroundManager();
         birdManager = new BirdManager(backgroundManager);
         pipeManager = new PipeManager(birdManager,backgroundManager);
-        pipeManager.addPipes(3);
+        scoreManager = new ScoreManager();
+        menuManager = new MenuManager(birdManager, camera);
+
+        pipeManager.addPipes(pipeQuantity);
     }
 
     // Render các đối tượng lên màn hình
@@ -62,33 +72,52 @@ public class GameScreen implements Screen {
         backgroundManager.renderWorld(batch);
         pipeManager.renderPipes(batch);
         birdManager.render(batch);
+        scoreManager.renderScore(batch, FlappyBirdEx.WORLD_WIDTH / 2f, FlappyBirdEx.WORLD_HEIGHT / 2f);
+        menuManager.renderRestartBtn(batch);
         batch.end();
     }
 
     // Cập nhật game theo delta time
     private void update(float delta) {
-        // Xử lý sự kiện người dùng chạm vào màn hình và cập nhật trạng thái trò chơi <<pgiang, hieppham>>
-        if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        // Xử lý sự kiện người dùng chạm vào màn hình
+        if (Gdx.input.justTouched()) {
+            float screenX = Gdx.input.getX();
+            float screenY = Gdx.input.getY();
+//            System.out.println("screenX: " + screenX + " screenY: " + screenY);
             if (birdManager.getState() == Bird.State.DEAD) {
-                birdManager.setState(Bird.State.IDLE);
-                birdManager.setPosition(FlappyBirdEx.WORLD_WIDTH / 3f, FlappyBirdEx.WORLD_HEIGHT / 2f);
-                pipeManager.addPipes(3);
+                if (menuManager.isRestartClicked(screenX, screenY)) {
+                    restartGame();
+                    return;
+                }
             }
-            else if(birdManager.getState() == Bird.State.IDLE){
+            else if (birdManager.getState() == Bird.State.IDLE) {
                 birdManager.setState(Bird.State.FLAPPY);
+                birdManager.jump();
             }
-            birdManager.jump();
+            else if (birdManager.getState() == Bird.State.FLAPPY) {
+                birdManager.jump();
+            }
         }
-        if(birdManager.getState() != Bird.State.DEAD){
+
+        // Cập nhật game logic
+        if (birdManager.getState() != Bird.State.DEAD) {
             backgroundManager.updateWorld(delta);
         }
-        if(birdManager.getState() == Bird.State.FLAPPY){
+
+        if (birdManager.getState() == Bird.State.FLAPPY) {
             pipeManager.checkCollisions();
             pipeManager.updatePipes(delta);
+            scoreManager.updateScore(pipeManager, birdManager);
         }
+
         birdManager.update(delta);
     }
-
+    private void restartGame() {
+        birdManager.setState(Bird.State.IDLE);
+        birdManager.setPosition(FlappyBirdEx.WORLD_WIDTH / 3f, FlappyBirdEx.WORLD_HEIGHT / 2f);
+        pipeManager.addPipes(pipeQuantity);
+        scoreManager.resetScore();
+    }
     // Cập nhật kích thước theo màn hình
     @Override
     public void resize(int width, int height) {
@@ -116,6 +145,6 @@ public class GameScreen implements Screen {
     // Loại bỏ các đối tượng khỏi bộ nhớ (optional)
     @Override
     public void dispose() {
-
+        game.dispose();
     }
 }

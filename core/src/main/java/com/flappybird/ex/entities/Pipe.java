@@ -14,6 +14,7 @@ public class Pipe {
     private final int width;
     private final int y1; // Vị trí dưới cùng của ống trên
     private final int y2; // Vị trí trên cùng của ống dưới
+    private boolean passed = false;
 
     // Constructor
     public Pipe(float spawnX, int gapHeight, int minY, int maxY, int width) {
@@ -34,10 +35,19 @@ public class Pipe {
     public boolean isOut() {
         return x < -width;
     }
+    public boolean isPassed() {
+        return passed;
+    }
 
+    public void setPassed(boolean passed) {
+        this.passed = passed;
+    }
     // Getter
     public float getX() {
         return x;
+    }
+    public float getWidth(){
+        return width;
     }
 
     // Vẽ ống
@@ -61,7 +71,7 @@ public class Pipe {
         x -= FlappyBirdEx.SCROLL_SPEED * delta;
     }
 
-    // Thực hiện va chạm với chim
+    // Thực hiện va chạm với Bird
     public boolean collides(Rectangle rect) {
         Rectangle topPipe = new Rectangle(x, y2, width, maxY - y2);
         Rectangle bottomPipe = new Rectangle(x, minY, width, y1 - minY);
