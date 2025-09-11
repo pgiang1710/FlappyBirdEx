@@ -67,7 +67,7 @@ public class PipeManager {
         pipes[index] = new Pipe(maxPipeX, gapHeight, groundHeight, worldHeight, gapWidth);
     }
 
-    // Kiểm tra va chạm với chim
+    // Kiểm tra va chạm với Bird
     public void checkCollisions() {
         maxPipeX = FlappyBirdEx.WORLD_WIDTH / 2f;
 
@@ -85,9 +85,12 @@ public class PipeManager {
 
                 maxPipeX = Math.max(maxPipeX, pipe.getX());
             }
+
         }
     }
-
+    public Pipe[] getPipes() {
+        return pipes;
+    }
     // Phương thức helper để debug
     public void renderHitboxes(ShapeRenderer shapeRenderer) {
         for (Pipe pipe : pipes) {

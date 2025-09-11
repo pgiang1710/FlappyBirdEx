@@ -1,6 +1,7 @@
 package com.flappybird.ex.managers;
 
 import static com.flappybird.ex.managers.TextureManager.birdTexture;
+import static com.flappybird.ex.managers.TextureManager.restart;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -73,6 +74,7 @@ public class BirdManager implements Disposable {
                 break;
             case DEAD:
                 updateDeadState(delta);
+                TextureRegion restartBtn = new TextureRegion(restart);
                 break;
             default:
                 updateFlyingState(delta);
@@ -117,6 +119,7 @@ public class BirdManager implements Disposable {
             bird.y = minY;
             bird.velocityY = 0f;
             bird.state = Bird.State.DEAD;
+
         } else if (bird.y > maxY) {
             bird.y = maxY;
             bird.velocityY = 0f;
@@ -161,6 +164,10 @@ public class BirdManager implements Disposable {
             1f, 1f,
             bird.rotation
         );
+    }
+
+    public float getX() {
+        return bird.x;
     }
 
     // Getter cho hitbox
