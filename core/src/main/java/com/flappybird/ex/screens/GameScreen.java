@@ -72,7 +72,7 @@ public class GameScreen implements Screen {
         backgroundManager.renderWorld(batch);
         pipeManager.renderPipes(batch);
         birdManager.render(batch);
-        scoreManager.renderScore(batch, FlappyBirdEx.WORLD_WIDTH / 2f, FlappyBirdEx.WORLD_HEIGHT / 2f);
+        scoreManager.renderScore(batch);
         menuManager.renderRestartBtn(batch);
         batch.end();
     }
@@ -118,6 +118,7 @@ public class GameScreen implements Screen {
         pipeManager.addPipes(pipeQuantity);
         scoreManager.resetScore();
     }
+
     // Cập nhật kích thước theo màn hình
     @Override
     public void resize(int width, int height) {

@@ -48,7 +48,7 @@ public class MenuManager implements Disposable {
         return restartRec.contains(worldTouch.x, worldTouch.y);
     }
 
-    public void dispose(){
+    public void dispose() {
         restart.dispose();
     }
 }
