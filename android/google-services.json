@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "927729393836",
+    "project_id": "flappybirdex",
+    "storage_bucket": "flappybirdex.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:927729393836:android:7854c5b43845388fbfff09",
+        "android_client_info": {
+          "package_name": "com.flappybird.ex"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXlhxR-6GNuI8eSphkrFUerUli33y1K-I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

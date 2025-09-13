@@ -10,7 +10,7 @@ buildscript {
   }
   dependencies {
     classpath "com.android.tools.build:gradle:8.7.3"
-
+    classpath 'com.google.gms:google-services:4.4.3'
   }
 }
 
@@ -54,6 +54,7 @@ configure(subprojects - project(':android')) {
   compileJava {
     options.incremental = true
   }
+
 }
 
 subprojects {
@@ -71,3 +72,5 @@ subprojects {
 }
 
 eclipse.project.name = 'FlappyBirdEx' + '-parent'
+
+

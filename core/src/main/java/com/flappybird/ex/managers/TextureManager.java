@@ -9,6 +9,8 @@ public class TextureManager {
     public final static Texture pipeGapTexture = new Texture("sprites/pipe_gap.png");
     public final static Texture birdTexture = new Texture("sprites/bird.png");
     public final static Texture restart = new Texture("sprites/restart.png");
+    public final static Texture share = new Texture("sprites/share.png");
+    public final static Texture leaderBoard = new Texture("sprites/add-to-leaderboard.png");
     public final static Texture num0 = new Texture("sprites/0.png");
     public final static Texture num1 = new Texture("sprites/1.png");
     public final static Texture num2 = new Texture("sprites/2.png");

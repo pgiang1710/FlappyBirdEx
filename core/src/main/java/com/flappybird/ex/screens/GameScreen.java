@@ -1,9 +1,6 @@
 package com.flappybird.ex.screens;
 
-import static com.flappybird.ex.managers.TextureManager.restart;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -17,6 +14,7 @@ import com.flappybird.ex.managers.BirdManager;
 import com.flappybird.ex.managers.MenuManager;
 import com.flappybird.ex.managers.PipeManager;
 import com.flappybird.ex.managers.ScoreManager;
+import com.flappybird.ex.managers.SoundManager;
 
 import java.util.Random;
 
@@ -72,8 +70,10 @@ public class GameScreen implements Screen {
         backgroundManager.renderWorld(batch);
         pipeManager.renderPipes(batch);
         birdManager.render(batch);
-        scoreManager.renderScore(batch, FlappyBirdEx.WORLD_WIDTH / 2f, FlappyBirdEx.WORLD_HEIGHT / 2f);
+        scoreManager.renderScore(batch);
         menuManager.renderRestartBtn(batch);
+        menuManager.renderLeaderboardBtn(batch);
+        menuManager.rendershareBtn(batch);
         batch.end();
     }
 
@@ -90,13 +90,13 @@ public class GameScreen implements Screen {
                     return;
                 }
             }
-            else if (birdManager.getState() == Bird.State.IDLE) {
+            else if (birdManager.getState() == Bird.State.IDLE || birdManager.getState() == Bird.State.FLAPPY) {
                 birdManager.setState(Bird.State.FLAPPY);
                 birdManager.jump();
             }
-            else if (birdManager.getState() == Bird.State.FLAPPY) {
-                birdManager.jump();
-            }
+//            else if (birdManager.getState() == Bird.State.FLAPPY) {
+//                birdManager.jump();
+//            }
         }
 
         // Cập nhật game logic
@@ -114,10 +114,11 @@ public class GameScreen implements Screen {
     }
     private void restartGame() {
         birdManager.setState(Bird.State.IDLE);
-        birdManager.setPosition(FlappyBirdEx.WORLD_WIDTH / 3f, FlappyBirdEx.WORLD_HEIGHT / 2f);
+        birdManager.setPosition(FlappyBirdEx.WORLD_WIDTH / 2f, FlappyBirdEx.WORLD_HEIGHT / 2f);
         pipeManager.addPipes(pipeQuantity);
         scoreManager.resetScore();
     }
+
     // Cập nhật kích thước theo màn hình
     @Override
     public void resize(int width, int height) {
@@ -146,5 +147,6 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         game.dispose();
+        SoundManager.dispose();
     }
 }
