@@ -3,6 +3,7 @@ package com.flappybird.ex.managers;
 import static com.flappybird.ex.managers.TextureManager.birdTexture;
 import static com.flappybird.ex.managers.TextureManager.restart;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -32,7 +33,7 @@ public class BirdManager implements Disposable {
         int birdWidth = frames[0].getRegionWidth();
         int birdHeight = frames[0].getRegionHeight();
         bird = new Bird(
-            FlappyBirdEx.WORLD_WIDTH / 2.5f,
+            FlappyBirdEx.WORLD_WIDTH / 2f,
             FlappyBirdEx.WORLD_HEIGHT / 2f,
             backgroundManager.getGroundHeight(),
             birdWidth,
@@ -119,6 +120,7 @@ public class BirdManager implements Disposable {
             bird.y = minY;
             bird.velocityY = 0f;
             bird.state = Bird.State.DEAD;
+            SoundManager.playHit();
 
         } else if (bird.y > maxY) {
             bird.y = maxY;
@@ -151,6 +153,7 @@ public class BirdManager implements Disposable {
     // Hành động nhảy
     public void jump() {
         bird.velocityY = bird.jumpForce;
+        SoundManager.playFlap();
     }
 
     // Render Bird

@@ -3,6 +3,7 @@ package com.flappybird.ex.managers;
 import static com.flappybird.ex.managers.TextureManager.pipeTexture;
 import static com.flappybird.ex.managers.TextureManager.pipeGapTexture;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.flappybird.ex.FlappyBirdEx;
@@ -80,6 +81,7 @@ public class PipeManager {
                 }
 
                 if (pipe.collides(birdManager.getBounds())) {
+                    SoundManager.playHit();
                     birdManager.setState(Bird.State.DEAD);
                 }
 

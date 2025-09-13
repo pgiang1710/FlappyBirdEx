@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.flappybird.ex.FlappyBirdEx;
+import com.flappybird.ex.managers.SoundManager;
 
 public class Pipe {
     // Các thuộc tính cần thiết
@@ -15,7 +16,6 @@ public class Pipe {
     private final int y1; // Vị trí dưới cùng của ống trên
     private final int y2; // Vị trí trên cùng của ống dưới
     private boolean passed = false;
-
     // Constructor
     public Pipe(float spawnX, int gapHeight, int minY, int maxY, int width) {
         this.minY = minY;

@@ -11,9 +11,8 @@ import static com.flappybird.ex.managers.TextureManager.num7;
 import static com.flappybird.ex.managers.TextureManager.num8;
 import static com.flappybird.ex.managers.TextureManager.num9;
 
-import com.badlogic.gdx.graphics.Color;
+import com.flappybird.ex.entities.Score;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.flappybird.ex.FlappyBirdEx;
 import com.flappybird.ex.entities.Pipe;
@@ -40,6 +39,7 @@ public class ScoreManager {
                 score++;
                 pipe.setPassed(true);
                 System.out.println("Score: " + score);
+                SoundManager.playScore();
             }
         }
     }
@@ -61,7 +61,7 @@ public class ScoreManager {
             batch.draw(numTex, x, y, numTex.getWidth() * 3, numTex.getHeight() * 3);
 
             // dịch x sang phải để vẽ số tiếp theo
-            x += numTex.getWidth();
+            x += numTex.getWidth() * 3.5f;
         }
     }
 

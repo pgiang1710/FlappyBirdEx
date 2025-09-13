@@ -1,10 +1,10 @@
 package com.flappybird.ex.managers;
 
 import static com.flappybird.ex.managers.TextureManager.restart;
+import static com.flappybird.ex.managers.TextureManager.leaderBoard;
+import static com.flappybird.ex.managers.TextureManager.share;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -16,17 +16,30 @@ public class MenuManager implements Disposable {
     private BirdManager birdManager;
     private Camera camera;
     private Rectangle restartRec;
-    private final float restartX = FlappyBirdEx.WORLD_WIDTH / 2f - restart.getWidth() / 2f;
-    private final float restartY = FlappyBirdEx.WORLD_HEIGHT / 2f - restart.getHeight() / 2f;
+    private Rectangle shareRec;
+    private Rectangle leaderBoardRec;
+    private final float baseX = FlappyBirdEx.WORLD_WIDTH / 2f;
+    private final float baseY = FlappyBirdEx.WORLD_HEIGHT / 2f;
 
     public MenuManager(BirdManager birdManager, Camera camera){
         this.birdManager = birdManager;
         this.camera = camera;
-        restartRec = new Rectangle(
-            restartX,
-            restartY,
+
+        leaderBoardRec = new Rectangle(
+            baseX - leaderBoard.getWidth()/ 2f,
+            baseY - 50,
+            leaderBoard.getWidth(),
+            leaderBoard.getHeight());
+        shareRec = new Rectangle(
+            baseX + leaderBoard.getWidth()/ 2f - restart.getWidth(),
+            baseY - restart.getHeight() / 2f + 100,
             restart.getWidth(),
             restart.getHeight());
+        restartRec = new Rectangle(
+            leaderBoardRec.x,
+            baseY - share.getHeight() / 2f + 100,
+            share.getWidth(),
+            share.getHeight());
     }
 
     public void renderRestartBtn(SpriteBatch batch){
@@ -35,6 +48,22 @@ public class MenuManager implements Disposable {
                 restart,
                 restartRec.x, restartRec.y,
                 restartRec.width, restartRec.height);
+        }
+    }
+    public void renderLeaderboardBtn(SpriteBatch batch){
+        if(birdManager.getState() == Bird.State.DEAD){
+            batch.draw(
+                leaderBoard,
+                leaderBoardRec.x, leaderBoardRec.y,
+                leaderBoardRec.width, leaderBoardRec.height);
+        }
+    }
+    public void rendershareBtn(SpriteBatch batch){
+        if(birdManager.getState() == Bird.State.DEAD){
+            batch.draw(
+                share,
+                shareRec.x, shareRec.y,
+                shareRec.width, shareRec.height);
         }
     }
 
