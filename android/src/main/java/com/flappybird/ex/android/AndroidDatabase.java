@@ -1,12 +1,16 @@
 package com.flappybird.ex.android;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+import com.flappybird.ex.ScoreDatabase;
+
+public class AndroidDatabase extends SQLiteOpenHelper implements ScoreDatabase {
     private static final String DATABASE_NAME = "flappybird.db";
     private static final int DATABASE_VERSION = 1;
 
@@ -16,8 +20,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_POINTS = "points";
     private static final String COLUMN_TIME = "time";
-    public DatabaseHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    public AndroidDatabase(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
@@ -37,7 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +
+        String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME +
             " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + COLUMN_POINTS + " INTEGER"
             + COLUMN_NAME + "TEXT"
@@ -48,5 +52,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
+    }
+
+    @Override
+    public void insertScore(int points) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("points", points);
+        db.insert("score", null, values);
+        db.close();
+    }
+
+    @Override
+    public int getHighScore() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT MAX(points) FROM score", null);
+        int highScore = cursor.moveToFirst() ? cursor.getInt(0) : 0;
+        cursor.close();
+        db.close();
+        return highScore;
     }
 }

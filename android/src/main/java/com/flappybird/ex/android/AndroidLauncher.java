@@ -14,5 +14,8 @@ public class AndroidLauncher extends AndroidApplication {
         AndroidApplicationConfiguration configuration = new AndroidApplicationConfiguration();
         configuration.useImmersiveMode = true; // Recommended, but not required.
         initialize(new FlappyBirdEx(), configuration);
+
+        AndroidDatabase db = new AndroidDatabase(this); // SQLiteOpenHelper implement ScoreDatabase
+        initialize(new FlappyBirdEx(db), new AndroidApplicationConfiguration());
     }
 }

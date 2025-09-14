@@ -43,9 +43,9 @@ public class SoundManager {
 //    }
 
     public static void dispose() {
-        flapSound.dispose();
-        scoreSound.dispose();
-        hitSound.dispose();
+//        flapSound.dispose();
+//        scoreSound.dispose();
+//        hitSound.dispose();
         //bgMusic.dispose();
     }
 }

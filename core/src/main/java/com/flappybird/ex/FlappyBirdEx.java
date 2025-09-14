@@ -13,9 +13,18 @@ public class FlappyBirdEx extends Game {
 
     // Hằng số liên quan đến tốc độ cuộn của background
     public static final float SCROLL_SPEED = 200f;
+    private ScoreDatabase database;
 
     // Các thuộc tính cần thiết
     private SpriteBatch spriteBatch;
+
+    public FlappyBirdEx(ScoreDatabase scoreDatabase) {
+        super();
+        this.database = scoreDatabase;
+    }
+    public FlappyBirdEx() {
+        super();
+    }
 
     // Tạo game screen và set màn hình
     @Override
@@ -30,5 +39,8 @@ public class FlappyBirdEx extends Game {
     }
     public SpriteBatch getSpriteBatch() {
         return spriteBatch;
+    }
+    public ScoreDatabase getDatabase() {
+        return database;
     }
 }
