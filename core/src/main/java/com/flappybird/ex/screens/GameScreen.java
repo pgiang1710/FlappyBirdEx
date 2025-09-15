@@ -71,8 +71,9 @@ public class GameScreen implements Screen {
         pipeManager.renderPipes(batch);
         birdManager.render(batch);
         scoreManager.renderScore(batch);
+        scoreManager.renderHighestScore(batch, game);
         menuManager.renderRestartBtn(batch);
-        menuManager.renderLeaderboardBtn(batch);
+        //menuManager.renderLeaderboardBtn(batch);
         menuManager.rendershareBtn(batch);
         batch.end();
     }
@@ -85,6 +86,8 @@ public class GameScreen implements Screen {
             float screenY = Gdx.input.getY();
 //            System.out.println("screenX: " + screenX + " screenY: " + screenY);
             if (birdManager.getState() == Bird.State.DEAD) {
+                game.getDatabase().insertScore(scoreManager.getScore());
+                System.out.println(scoreManager.getScore());
                 if (menuManager.isRestartClicked(screenX, screenY)) {
                     restartGame();
                     return;

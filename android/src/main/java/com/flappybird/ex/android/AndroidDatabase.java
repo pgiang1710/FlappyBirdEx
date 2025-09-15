@@ -41,7 +41,7 @@ public class AndroidDatabase extends SQLiteOpenHelper implements ScoreDatabase {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME +
+        String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +
             " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + COLUMN_POINTS + " INTEGER"
             + COLUMN_NAME + "TEXT"
@@ -59,14 +59,14 @@ public class AndroidDatabase extends SQLiteOpenHelper implements ScoreDatabase {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("points", points);
-        db.insert("score", null, values);
+        db.insert("SCOREBOARD", null, values);
         db.close();
     }
 
     @Override
     public int getHighScore() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT MAX(points) FROM score", null);
+        Cursor cursor = db.rawQuery("SELECT MAX(points) FROM SCOREBOARD", null);
         int highScore = cursor.moveToFirst() ? cursor.getInt(0) : 0;
         cursor.close();
         db.close();

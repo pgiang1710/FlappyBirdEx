@@ -21,5 +21,9 @@ public class TextureManager {
     public final static Texture num7 = new Texture("sprites/7.png");
     public final static Texture num8 = new Texture("sprites/8.png");
     public final static Texture num9 = new Texture("sprites/9.png");
+    public final static Texture easy = new Texture("sprites/easy.png");
+    public final static Texture medium = new Texture("sprites/medium.png");
+    public final static Texture hard = new Texture("sprites/hard.png");
+    public final static Texture exit = new Texture("sprites/exit.png");
 
 }

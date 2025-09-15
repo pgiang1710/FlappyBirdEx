@@ -12,7 +12,7 @@ public class FlappyBirdEx extends Game {
     public static final int WORLD_HEIGHT = 1433  ;
 
     // Hằng số liên quan đến tốc độ cuộn của background
-    public static final float SCROLL_SPEED = 200f;
+    public static final float SCROLL_SPEED = 300f;
     private ScoreDatabase database;
 
     // Các thuộc tính cần thiết

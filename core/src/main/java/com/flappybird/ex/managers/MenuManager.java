@@ -1,5 +1,8 @@
 package com.flappybird.ex.managers;
 
+import static com.flappybird.ex.managers.TextureManager.easy;
+import static com.flappybird.ex.managers.TextureManager.exit;
+import static com.flappybird.ex.managers.TextureManager.medium;
 import static com.flappybird.ex.managers.TextureManager.restart;
 import static com.flappybird.ex.managers.TextureManager.leaderBoard;
 import static com.flappybird.ex.managers.TextureManager.share;
@@ -15,9 +18,9 @@ import com.flappybird.ex.entities.Bird;
 public class MenuManager implements Disposable {
     private BirdManager birdManager;
     private Camera camera;
-    private Rectangle restartRec;
-    private Rectangle shareRec;
-    private Rectangle leaderBoardRec;
+    private Rectangle easyRec;
+    private Rectangle mediumRec;
+    private Rectangle exitRec;
     private final float baseX = FlappyBirdEx.WORLD_WIDTH / 2f;
     private final float baseY = FlappyBirdEx.WORLD_HEIGHT / 2f;
 
@@ -25,45 +28,49 @@ public class MenuManager implements Disposable {
         this.birdManager = birdManager;
         this.camera = camera;
 
-        leaderBoardRec = new Rectangle(
+        exitRec = new Rectangle(
             baseX - leaderBoard.getWidth()/ 2f,
             baseY - 50,
             leaderBoard.getWidth(),
             leaderBoard.getHeight());
-        shareRec = new Rectangle(
-            baseX + leaderBoard.getWidth()/ 2f - restart.getWidth(),
-            baseY - restart.getHeight() / 2f + 100,
-            restart.getWidth(),
-            restart.getHeight());
-        restartRec = new Rectangle(
-            leaderBoardRec.x,
-            baseY - share.getHeight() / 2f + 100,
-            share.getWidth(),
-            share.getHeight());
-    }
+        mediumRec = new Rectangle(
+            baseX + leaderBoard.getWidth()/ 2f - medium.getWidth(),
+            baseY - medium.getHeight() / 2f + 100,
+            medium.getWidth(),
+            medium.getHeight());
+        easyRec = new Rectangle(
+            exitRec.x,
+            baseY - easy.getHeight() / 2f + 100,
+            easy.getWidth(),
+            easy.getHeight());
 
+
+    }
+    public void renderButton(SpriteBatch batch, int scroolSpeed){
+
+    }
     public void renderRestartBtn(SpriteBatch batch){
         if(birdManager.getState() == Bird.State.DEAD){
             batch.draw(
-                restart,
-                restartRec.x, restartRec.y,
-                restartRec.width, restartRec.height);
+                easy,
+                easyRec.x, easyRec.y,
+                easyRec.width, easyRec.height);
         }
     }
     public void renderLeaderboardBtn(SpriteBatch batch){
         if(birdManager.getState() == Bird.State.DEAD){
             batch.draw(
-                leaderBoard,
-                leaderBoardRec.x, leaderBoardRec.y,
-                leaderBoardRec.width, leaderBoardRec.height);
+                exit,
+                exitRec.x /2f, exitRec.y,
+                exitRec.width, exitRec.height);
         }
     }
     public void rendershareBtn(SpriteBatch batch){
         if(birdManager.getState() == Bird.State.DEAD){
             batch.draw(
-                share,
-                shareRec.x, shareRec.y,
-                shareRec.width, shareRec.height);
+                medium,
+                mediumRec.x, mediumRec.y,
+                mediumRec.width, mediumRec.height);
         }
     }
 
@@ -74,7 +81,7 @@ public class MenuManager implements Disposable {
         Vector3 worldTouch = camera.unproject(new Vector3(screenX, screenY, 0));
 //        System.out.println("worldTouchX: " + worldTouch.x + " worldTouchY: " + worldTouch.y
 //            + "\nrestartX: " + restartX + " restartY: " + restartY);
-        return restartRec.contains(worldTouch.x, worldTouch.y);
+        return easyRec.contains(worldTouch.x, worldTouch.y);
     }
 
     public void dispose() {

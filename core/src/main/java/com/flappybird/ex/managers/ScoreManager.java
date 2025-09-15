@@ -11,6 +11,8 @@ import static com.flappybird.ex.managers.TextureManager.num7;
 import static com.flappybird.ex.managers.TextureManager.num8;
 import static com.flappybird.ex.managers.TextureManager.num9;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.flappybird.ex.entities.Score;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -51,20 +53,32 @@ public class ScoreManager {
 //    }
     public void renderScore(SpriteBatch batch) {
         String scoreStr = String.valueOf(this.score); // ví dụ rawScore = 123 → "123"
-        float x = FlappyBirdEx.WORLD_WIDTH / 2f - num0.getWidth();
+        float x = FlappyBirdEx.WORLD_WIDTH / 2f;
         float y = FlappyBirdEx.WORLD_HEIGHT / 2f + (num0.getHeight() * 10);
+        float textWidth = 0;
+        for (int i = 0; i < scoreStr.length(); i++) {
+            char c = scoreStr.charAt(i);
+            int digit = c - '0';
+            Texture numTex = numberTextures[digit];
+            textWidth += numTex.getWidth() * 3.5f;
+        }
         for (int i = 0; i < scoreStr.length(); i++) {
             char c = scoreStr.charAt(i);
             int digit = c - '0'; // chuyển '1' → 1, '0' → 0
 
             Texture numTex = numberTextures[digit];
-            batch.draw(numTex, x, y, numTex.getWidth() * 3, numTex.getHeight() * 3);
+            batch.draw(numTex, x-textWidth/2f, y, numTex.getWidth() * 3, numTex.getHeight() * 3);
 
             // dịch x sang phải để vẽ số tiếp theo
             x += numTex.getWidth() * 3.5f;
         }
     }
-
+    public void renderHighestScore(SpriteBatch batch, FlappyBirdEx game){
+        BitmapFont font = new BitmapFont();
+        font.getData().setScale(2);
+        font.setColor(Color.RED);
+        font.draw(batch, "HIGHEST SCORE: " + game.getDatabase().getHighScore(), 50, FlappyBirdEx.WORLD_HEIGHT );
+    }
     public int getScore() {
         return score;
     }
